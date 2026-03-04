@@ -1,97 +1,56 @@
 ---
 title: "Introduction"
-description: "Welcome to the new home for your documentation"
+description: "Prompt Deck is a Laravel package for versioned, file-based AI prompt management with variable interpolation, performance tracking, and Laravel AI SDK integration."
 ---
 
-## Setting up
+Prompt Deck helps you organise your AI agent instructions as structured, version-controlled files. It provides variable interpolation, performance tracking, A/B testing, and optional seamless integration with the [Laravel AI SDK](https://laravel.com/ai) making it easy to iterate, compare, and activate prompt versions across your Laravel application.
 
-Get your documentation site up and running in minutes.
+## Quick start
+
+Get up and running with Prompt Deck in minutes.
 
 <Card
-  title="Start here"
+  title="Installation guide"
   icon="rocket"
-  href="/quickstart"
+  href="/getting-started/installation"
   horizontal
 >
-  Follow our three step quickstart guide.
+  Install, configure, and verify Prompt Deck in your Laravel project.
 </Card>
 
-## Make it yours
+## Key features
 
-Design a docs site that looks great and empowers your users.
+<CardGroup cols={2}>
+  <Card title="Versioned prompts" icon="layer-group" href="/core/prompts">
+    Store prompts as files on disk with directory-based versioning. Load, render, and switch between versions effortlessly.
+  </Card>
+  <Card title="Prompt generator" icon="wand-magic-sparkles" href="/core/make-prompt">
+    Scaffold versioned, role-based prompt structures with the `make:prompt` Artisan command.
+  </Card>
+  <Card title="Variable interpolation" icon="code" href="/core/prompts#variable-interpolation">
+    Use `{{ $variable }}` syntax in prompt templates for dynamic content rendering.
+  </Card>
+  <Card title="AI API messages" icon="message" href="/core/prompts#building-messages-for-ai-apis">
+    Convert prompts to messages arrays ready for OpenAI, Anthropic, and other chat-completion APIs.
+  </Card>
+  <Card title="Laravel AI SDK" icon="robot" href="/integrations/ai-sdk">
+    First-class integration with Laravel AI SDK — auto-scaffolding, traits, and middleware.
+  </Card>
+  <Card title="Performance tracking" icon="chart-line" href="/advanced/tracking">
+    Log executions with token usage, latency, cost, and feedback for A/B testing and monitoring.
+  </Card>
+</CardGroup>
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+## Explore the docs
 
-## Create beautiful pages
-
-Everything you need to create world-class documentation.
-
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+<CardGroup cols={3}>
+  <Card title="Configuration" icon="gear" href="/getting-started/configuration">
+    Customise caching, tracking, and file settings.
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
+  <Card title="Artisan commands" icon="terminal" href="/core/commands">
+    Five commands for managing prompts from the CLI.
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
+  <Card title="Testing" icon="flask-vial" href="/advanced/testing">
+    Strategies and examples for testing prompts.
   </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
-
-## Need inspiration?
-
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+</CardGroup>

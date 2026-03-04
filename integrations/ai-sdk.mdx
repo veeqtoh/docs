@@ -1,0 +1,472 @@
+---
+title: "Laravel AI SDK integration"
+description: "Use Prompt Deck with Laravel AI SDK agents for automatic prompt loading, version tracking, and performance monitoring."
+sidebarTitle: "Laravel AI SDK"
+---
+
+## Introduction
+
+Prompt Deck provides first-class, optional integration with the [Laravel AI SDK](https://laravel.com/docs/ai-sdk). When the AI SDK is installed, you get:
+
+- **Automatic prompt scaffolding** — Running `make:agent` automatically creates a matching prompt directory.
+- **The `HasPromptTemplate` trait** — Provides `instructions()` and `promptMessages()` methods that load versioned prompts directly into your AI agents.
+- **The `TrackPromptMiddleware`** — Automatically records prompt executions (tokens, latency, model, etc.) using Prompt Deck's tracking system.
+
+All of this is entirely optional. Prompt Deck works perfectly without the AI SDK.
+
+## Installation
+
+Prompt Deck does **not** require the AI SDK — it's listed as a `suggest` dependency. Install it when you're ready:
+
+```bash
+composer require laravel/ai
+```
+
+Once `laravel/ai` is installed, Prompt Deck's AI SDK features activate automatically. No additional configuration is needed.
+
+## Automatic prompt scaffolding
+
+When the Laravel AI SDK is installed, Prompt Deck automatically hooks into the `make:agent` command. Whenever you create a new agent:
+
+```bash
+php artisan make:agent SalesCoach
+```
+
+Prompt Deck detects the successful command and automatically runs:
+
+```bash
+php artisan make:prompt sales-coach
+```
+
+This creates a versioned prompt directory ready for the agent to use via the `HasPromptTemplate` trait — zero extra setup required.
+
+### How it works
+
+Prompt Deck registers a listener (`AfterMakeAgent`) on Laravel's `CommandFinished` event. When `make:agent` completes successfully, the listener:
+
+1. Extracts the agent name from the command input.
+2. Converts it to kebab-case (`SalesCoach` → `sales-coach`).
+3. Strips any namespace prefix (`App\Ai\Agents\SalesCoach` → `sales-coach`).
+4. Checks if the prompt already exists (skips if it does).
+5. Runs `make:prompt` with the derived name.
+
+The listener is only registered when `laravel/ai` is installed. If the prompt creation fails for any reason, it does **not** break the `make:agent` workflow — the agent is still created successfully.
+
+### Example output
+
+```
+$ php artisan make:agent SalesCoach
+
+   INFO  Agent [app/Ai/Agents/SalesCoach.php] created successfully.
+
+PromptDeck: Created prompt sales-coach for SalesCoach.
+```
+
+### Disabling auto-scaffolding
+
+To disable automatic prompt scaffolding, set the configuration option:
+
+```php
+// config/prompt-deck.php
+'scaffold_on_make_agent' => false,
+```
+
+Or via environment variable:
+
+```dotenv
+PROMPTDECK_SCAFFOLD_ON_MAKE_AGENT=false
+```
+
+## Quick start
+
+Use the `HasPromptTemplate` trait on any agent class:
+
+```php
+<?php
+
+namespace App\Ai\Agents;
+
+use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Promptable;
+use Veeqtoh\PromptDeck\Concerns\HasPromptTemplate;
+
+class SalesCoach implements Agent
+{
+    use Promptable, HasPromptTemplate;
+
+    // instructions() is provided automatically by HasPromptTemplate.
+    // It loads prompts/sales-coach/v{active}/system.md
+}
+```
+
+That's it. The `HasPromptTemplate` trait provides the `instructions()` method required by the `Agent` contract, loading the system prompt from your Prompt Deck files.
+
+## The HasPromptTemplate trait
+
+The `HasPromptTemplate` trait bridges Prompt Deck's file-based templates with the Laravel AI SDK's agent contracts.
+
+### How it maps to AI SDK contracts
+
+| Prompt Deck | AI SDK | Description |
+|---|---|---|
+| `system.md` role file | `instructions()` | Agent's system prompt. |
+| `user.md`, `assistant.md`, etc. | `messages()` via `promptMessages()` | Conversation context. |
+| `metadata.json` | — | Prompt metadata (description, variables, etc.). |
+| `v1/`, `v2/`, etc. | — | Version management. |
+
+### Mapping diagram
+
+```
+prompts/sales-coach/
+├── v1/
+│   ├── system.md          → instructions()
+│   ├── user.md            → promptMessages()
+│   └── metadata.json
+└── v2/
+    ├── system.md          → instructions()  (active version)
+    ├── user.md            → promptMessages()
+    ├── assistant.md       → promptMessages()
+    └── metadata.json
+```
+
+## Customising the prompt
+
+### Prompt name
+
+By default, the prompt name is derived from the class name in kebab-case:
+
+- `SalesCoach` → `sales-coach`
+- `DocumentAnalyzer` → `document-analyzer`
+
+Override `promptName()` to use a custom name:
+
+```php
+class SalesCoach implements Agent
+{
+    use Promptable, HasPromptTemplate;
+
+    public function promptName(): string
+    {
+        return 'coaching/sales'; // loads from prompts/coaching/sales/
+    }
+}
+```
+
+### Pinning a version
+
+By default, the active version is loaded. Pin to a specific version by overriding `promptVersion()`:
+
+```php
+public function promptVersion(): ?int
+{
+    return 2; // Always use v2
+}
+```
+
+Return `null` (the default) to always load the active version — useful for A/B testing and gradual rollouts.
+
+### Variable interpolation
+
+Pass dynamic values into your prompt templates by overriding `promptVariables()`:
+
+```php
+class SalesCoach implements Agent
+{
+    use Promptable, HasPromptTemplate;
+
+    public function __construct(public User $user) {}
+
+    public function promptVariables(): array
+    {
+        return [
+            'user_name' => $this->user->name,
+            'company'   => $this->user->company,
+        ];
+    }
+}
+```
+
+In your `system.md`:
+
+```markdown
+You are a sales coach for {{ $company }}.
+You are helping {{ $user_name }} improve their technique.
+```
+
+Variables are interpolated into **all** roles (system, user, assistant, etc.) when accessed via `instructions()` or `promptMessages()`.
+
+## Full agent example
+
+Here's a complete agent using all Prompt Deck features with the AI SDK:
+
+```php
+<?php
+
+namespace App\Ai\Agents;
+
+use App\Ai\Tools\RetrievePreviousTranscripts;
+use App\Models\User;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\Conversational;
+use Laravel\Ai\Contracts\HasMiddleware;
+use Laravel\Ai\Contracts\HasStructuredOutput;
+use Laravel\Ai\Contracts\HasTools;
+use Laravel\Ai\Promptable;
+use Veeqtoh\PromptDeck\Ai\TrackPromptMiddleware;
+use Veeqtoh\PromptDeck\Concerns\HasPromptTemplate;
+
+class SalesCoach implements Agent, Conversational, HasTools, HasStructuredOutput, HasMiddleware
+{
+    use Promptable, HasPromptTemplate;
+
+    public function __construct(public User $user) {}
+
+    // instructions() is provided by HasPromptTemplate — no need to define it.
+
+    /**
+     * Dynamic variables injected into the prompt template.
+     */
+    public function promptVariables(): array
+    {
+        return [
+            'user_name' => $this->user->name,
+            'company'   => $this->user->company,
+        ];
+    }
+
+    /**
+     * Conversation context from the prompt template plus history.
+     */
+    public function messages(): iterable
+    {
+        return $this->promptMessages();
+    }
+
+    /**
+     * Tools available to the agent.
+     */
+    public function tools(): iterable
+    {
+        return [
+            new RetrievePreviousTranscripts,
+        ];
+    }
+
+    /**
+     * Structured output schema.
+     */
+    public function schema(JsonSchema $schema): array
+    {
+        return [
+            'feedback' => $schema->string()->required(),
+            'score'    => $schema->integer()->min(1)->max(10)->required(),
+        ];
+    }
+
+    /**
+     * Middleware for automatic tracking.
+     */
+    public function middleware(): array
+    {
+        return [
+            new TrackPromptMiddleware,
+        ];
+    }
+}
+```
+
+Create and populate the prompt files:
+
+```bash
+php artisan make:prompt sales-coach --user
+```
+
+Edit `prompts/sales-coach/v1/system.md`:
+
+```markdown
+You are a sales coach for {{ $company }}.
+You are helping {{ $user_name }} improve their sales technique.
+
+Analyse transcripts carefully and provide:
+- Specific, actionable feedback
+- A score from 1-10
+```
+
+## Conversation context
+
+If your agent implements `Conversational`, you can load pre-defined conversation context from Prompt Deck role files using the `promptMessages()` method.
+
+### Loading all non-system roles
+
+By default, `promptMessages()` returns all roles **except** `system` (which goes through `instructions()`):
+
+```php
+public function messages(): iterable
+{
+    // Returns Message[] for all non-system roles (user, assistant, etc.)
+    return $this->promptMessages();
+}
+```
+
+### Limiting to specific roles
+
+Pass an array to limit which roles are included:
+
+```php
+public function messages(): iterable
+{
+    return $this->promptMessages(['user']);
+}
+```
+
+### Merging with database history
+
+Combine template messages with conversation history from your database:
+
+```php
+use Laravel\Ai\Messages\Message;
+
+public function messages(): iterable
+{
+    // Pre-defined context from the prompt template.
+    $context = $this->promptMessages();
+
+    // Plus conversation history from the database.
+    $history = History::where('user_id', $this->user->id)
+        ->latest()
+        ->limit(50)
+        ->get()
+        ->reverse()
+        ->map(fn ($m) => new Message($m->role, $m->content))
+        ->all();
+
+    return array_merge($context, $history);
+}
+```
+
+## Performance tracking middleware
+
+The `TrackPromptMiddleware` automatically records prompt executions via Prompt Deck's tracking system.
+
+### Setting up the middleware
+
+<Steps>
+  <Step title="Enable tracking">
+    Set the tracking configuration in `config/prompt-deck.php`:
+
+    ```php
+    'tracking' => [
+        'enabled'    => true,
+        'connection' => null, // uses default database connection
+    ],
+    ```
+  </Step>
+  <Step title="Publish and run migrations">
+    ```bash
+    php artisan vendor:publish --tag=prompt-deck-migrations
+    php artisan migrate
+    ```
+  </Step>
+  <Step title="Add middleware to your agent">
+    ```php
+    use Laravel\Ai\Contracts\HasMiddleware;
+    use Veeqtoh\PromptDeck\Ai\TrackPromptMiddleware;
+
+    class SalesCoach implements Agent, HasMiddleware
+    {
+        use Promptable, HasPromptTemplate;
+
+        public function middleware(): array
+        {
+            return [
+                new TrackPromptMiddleware,
+            ];
+        }
+    }
+    ```
+  </Step>
+</Steps>
+
+### What gets tracked
+
+The middleware automatically records the following fields to the `prompt_executions` table:
+
+| Field | Source |
+|---|---|
+| `prompt_name` | Agent's `promptName()` method. |
+| `prompt_version` | Resolved template version number. |
+| `input` | The user's prompt text from the `AgentPrompt`. |
+| `output` | The AI response text. |
+| `tokens` | Total token usage from the response. |
+| `latency_ms` | Round-trip time in milliseconds (measured via `hrtime`). |
+| `model` | Model used (e.g. `gpt-4o`, `claude-3-sonnet`). |
+| `provider` | Provider name (e.g. `openai`, `anthropic`). |
+
+### How it works internally
+
+The middleware:
+1. Records the start time before the request using `hrtime(true)`.
+2. Passes the prompt to the next middleware in the pipeline.
+3. Uses the response's `then()` hook to record execution data after the response completes.
+4. Calls `PromptManager::track()` with the collected data.
+
+The middleware only tracks agents that use the `HasPromptTemplate` trait. If the agent doesn't have a `promptName()` method, the tracking is silently skipped.
+
+## Accessing the template directly
+
+You can access the full `PromptTemplate` object from within your agent for advanced use cases:
+
+```php
+// Get the template instance.
+$template = $this->promptTemplate();
+
+// Check available roles.
+$template->roles();       // ['system', 'user', 'assistant']
+$template->has('skill');  // false
+
+// Get raw content (no interpolation).
+$template->raw('system');
+
+// Get the resolved version.
+$template->version();     // 2
+
+// Get prompt metadata.
+$template->metadata();    // ['description' => '...', ...]
+```
+
+The template instance is cached for the lifetime of the agent object, so repeated calls to `promptTemplate()` don't incur additional filesystem or cache lookups.
+
+## Clearing the cached template
+
+Clear the cached template to force a fresh load on next access:
+
+```php
+$agent->forgetPromptTemplate();
+```
+
+This is useful in:
+- **Long-running processes** (queue workers, daemons) where prompts might change between jobs.
+- **Tests** where you switch prompt versions between assertions.
+
+The method returns `$this` for fluent chaining:
+
+```php
+$agent->forgetPromptTemplate()->promptTemplate(); // fresh load
+```
+
+## Without the AI SDK
+
+The `HasPromptTemplate` trait works even without `laravel/ai` installed. The `instructions()` method simply returns a string, and `promptMessages()` falls back to returning raw arrays instead of AI SDK `Message` objects:
+
+```php
+// Without laravel/ai — returns array
+$messages = $agent->promptMessages();
+// [['role' => 'user', 'content' => '...'], ...]
+
+// With laravel/ai — returns Message[]
+$messages = $agent->promptMessages();
+// [Message('user', '...'), ...]
+```
+
+This allows you to use Prompt Deck's template loading in any context, not just with the AI SDK.
