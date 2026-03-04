@@ -1,9 +1,9 @@
 ---
 title: "Introduction"
-description: "Prompt Deck is a Laravel package for versioned, file-based AI prompt management with variable interpolation, performance tracking, and Laravel AI SDK integration."
+description: "Prompt Deck helps you organise your AI Agents instructions as structured, version-controlled files, making it easy to iterate, compare, and activate prompt versions across your Laravel / PHP application."
 ---
 
-Prompt Deck helps you organise your AI agent instructions as structured, version-controlled files. It provides variable interpolation, performance tracking, A/B testing, and optional seamless integration with the [Laravel AI SDK](https://laravel.com/ai) making it easy to iterate, compare, and activate prompt versions across your Laravel application.
+It provides variable interpolation, performance tracking, A/B testing, and optional seamless integration with the [Laravel AI SDK](https://laravel.com/docs/ai-sdk).
 
 ## Quick start
 
@@ -17,6 +17,90 @@ Get up and running with Prompt Deck in minutes.
 >
   Install, configure, and verify Prompt Deck in your Laravel project.
 </Card>
+
+## Quick usage
+
+### Creating a prompt
+
+Use the Artisan command to create a versioned prompt:
+
+```bash
+php artisan make:prompt order-summary
+```
+
+This creates the following structure:
+
+```
+resources/prompts/
+└── order-summary/
+    ├── v1/
+    │   └── system.md
+    └── metadata.json
+```
+
+Edit `resources/prompts/order-summary/v1/system.md` with your prompt content. Use `{{ $variable }}` syntax for dynamic values:
+
+```markdown
+You are a {{ $tone }} customer service agent.
+Summarise the following order for the customer: {{ $order }}.
+```
+
+### Using a prompt
+
+Load and render prompts with the `PromptDeck` facade:
+
+```php
+use Veeqtoh\PromptDeck\Facades\PromptDeck;
+
+// Load the active version of a prompt
+$prompt = PromptDeck::get('order-summary');
+
+// Render a role with variables
+$prompt->system(['tone' => 'friendly', 'order' => $orderDetails]);
+// "You are a friendly customer service agent. Summarise the following order..."
+
+// Build a messages array ready for any chat-completion API
+$messages = $prompt->toMessages(['tone' => 'friendly', 'order' => $orderDetails]);
+// [['role' => 'system', 'content' => '...']]
+```
+
+### Versioning
+
+Create a new version of an existing prompt:
+
+```bash
+php artisan make:prompt order-summary
+# Automatically creates v2, v3, etc.
+```
+
+Activate a specific version:
+
+```bash
+php artisan prompt:activate order-summary v2
+```
+
+Or load a specific version programmatically:
+
+```php
+$prompt = PromptDeck::get('order-summary', 'v2');
+```
+
+### Laravel AI SDK integration
+
+If you use the [Laravel AI SDK](https://laravel.com/docs/ai-sdk), add the `HasPromptTemplate` trait to your agents. This way, you do not need to define the `instructions()` method as it is provided automatically.
+
+```php
+use Veeqtoh\PromptDeck\Concerns\HasPromptTemplate;
+
+class OrderAgent extends Agent
+{
+    use HasPromptTemplate;
+
+    // instructions() and promptMessages() are provided automatically
+}
+```
+
+Running `make:agent` will also auto-scaffold a matching prompt directory.
 
 ## Key features
 
