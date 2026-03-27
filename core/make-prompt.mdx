@@ -45,7 +45,9 @@ You will be guided through a series of questions:
 4. **Would you like to create prompt files for additional roles?** — Confirm, then enter comma-separated role names (e.g. `assistant, developer`).
 
 <Note>
-The interactive description and user-prompt questions are only asked when the name argument is omitted. When passing a name directly, use the `--desc`, `--user`, and `--interactive` options instead.
+    The interactive description and user-prompt questions are only asked when
+    the name argument is omitted. When passing a name directly, use the
+    `--desc`, `--user`, and `--interactive` options instead.
 </Note>
 
 ## Command signature
@@ -56,20 +58,20 @@ make:prompt {name?} {--from=} {--desc=} {--u|user} {--role=*} {--i|interactive} 
 
 ### Arguments
 
-| Argument | Required | Description |
-|----------|----------|-------------|
+| Argument | Required | Description                                                                                        |
+| -------- | -------- | -------------------------------------------------------------------------------------------------- |
 | `name`   | No       | The name of the prompt. Omit to be prompted interactively. Automatically normalised to kebab-case. |
 
 ### Options
 
-| Option               | Shorthand | Description |
-|----------------------|-----------|-------------|
-| `--from=`            |           | Path to a custom stub file to use as the user prompt template. |
-| `--desc=`            |           | A short description of what this prompt does. Stored in `metadata.json`. |
-| `--user`             | `-u`      | Also create a `user` prompt file alongside the default `system` prompt. |
-| `--role=*`           |           | One or more additional roles to scaffold prompt files for. Repeatable. |
-| `--interactive`      | `-i`      | Interactively choose which additional roles to create. |
-| `--force`            | `-f`      | Overwrite an existing prompt's latest version without confirmation. |
+| Option          | Shorthand | Description                                                              |
+| --------------- | --------- | ------------------------------------------------------------------------ |
+| `--from=`       |           | Path to a custom stub file to use as the user prompt template.           |
+| `--desc=`       |           | A short description of what this prompt does. Stored in `metadata.json`. |
+| `--user`        | `-u`      | Also create a `user` prompt file alongside the default `system` prompt.  |
+| `--role=*`      |           | One or more additional roles to scaffold prompt files for. Repeatable.   |
+| `--interactive` | `-i`      | Interactively choose which additional roles to create.                   |
+| `--force`       | `-f`      | Overwrite an existing prompt's latest version without confirmation.      |
 
 ## Prompt structure
 
@@ -106,13 +108,13 @@ A `metadata.json` file is written to the prompt root directory each time the com
 }
 ```
 
-| Field         | Description |
-|---------------|-------------|
-| `name`        | The kebab-case prompt name. |
-| `description` | A human-readable summary. Populated via `--desc=` or the interactive flow. |
+| Field         | Description                                                                     |
+| ------------- | ------------------------------------------------------------------------------- |
+| `name`        | The kebab-case prompt name.                                                     |
+| `description` | A human-readable summary. Populated via `--desc=` or the interactive flow.      |
 | `roles`       | An ordered list of every role that was scaffolded. Always starts with `system`. |
-| `variables`   | Reserved for future use (template variable extraction). |
-| `created_at`  | ISO 8601 timestamp of creation. |
+| `variables`   | Reserved for future use (template variable extraction).                         |
+| `created_at`  | ISO 8601 timestamp of creation.                                                 |
 
 ## Roles
 
@@ -131,6 +133,7 @@ The default system prompt stub contains:
 You are an AI assistant specialized in...
 
 Follow these guidelines:
+
 - Be helpful
 - Use {{ $tone }} tone
 ```
@@ -186,7 +189,8 @@ php artisan make:prompt code-reviewer -i
 ```
 
 <Note>
-When `--role` values are provided explicitly, the interactive role prompt is skipped — explicit values always take precedence.
+    When `--role` values are provided explicitly, the interactive role prompt is
+    skipped — explicit values always take precedence.
 </Note>
 
 All scaffolded roles (including `system` and optionally `user`) are recorded in the `roles` array of `metadata.json`.
@@ -234,11 +238,11 @@ The content of generated prompt files comes from **stub templates**. Three stubs
 
 ### Default stubs
 
-| Stub                    | Used For           | Placeholders      |
-|-------------------------|--------------------|--------------------|
-| `system-prompt.stub`    | `system.md`        | `{{ $tone }}`      |
-| `user-prompt.stub`      | `user.md`          | `{{ $name }}`, `{{ $input }}` |
-| `role-prompt.stub`      | Extra role files   | `{{ $role }}` (auto-replaced at generation time) |
+| Stub                 | Used For         | Placeholders                                     |
+| -------------------- | ---------------- | ------------------------------------------------ |
+| `system-prompt.stub` | `system.md`      | `{{ $tone }}`                                    |
+| `user-prompt.stub`   | `user.md`        | `{{ $name }}`, `{{ $input }}`                    |
+| `role-prompt.stub`   | Extra role files | `{{ $role }}` (auto-replaced at generation time) |
 
 The default stubs are located in the package's `stubs/` directory.
 
@@ -271,14 +275,14 @@ The `--from` option only affects the user prompt file. The system prompt always 
 
 All prompt names are automatically converted to **kebab-case** for consistent directory naming. The conversion handles a variety of input formats:
 
-| Input              | Result            |
-|--------------------|-------------------|
-| `MyPrompt`         | `my-prompt`       |
-| `orderSummary`     | `order-summary`   |
-| `snake_case_name`  | `snake-case-name` |
-| `LOUD_PROMPT`      | `loud-prompt`     |
-| `My_Cool Prompt`   | `my-cool-prompt`  |
-| `already-kebab`    | `already-kebab`   |
+| Input             | Result            |
+| ----------------- | ----------------- |
+| `MyPrompt`        | `my-prompt`       |
+| `orderSummary`    | `order-summary`   |
+| `snake_case_name` | `snake-case-name` |
+| `LOUD_PROMPT`     | `loud-prompt`     |
+| `My_Cool Prompt`  | `my-cool-prompt`  |
+| `already-kebab`   | `already-kebab`   |
 
 This normalisation applies to both the prompt name and any extra role names provided via `--role`.
 
@@ -286,10 +290,10 @@ This normalisation applies to both the prompt name and any extra role names prov
 
 The command respects the following values from `config/prompt-deck.php`:
 
-| Key                       | Default                  | Description |
-|---------------------------|--------------------------|-------------|
-| `prompt-deck.path`       | `resource_path('prompts')` | Base directory where prompt structures are created. |
-| `prompt-deck.extension`  | `md`                     | File extension for generated prompt files. |
+| Key                     | Default                    | Description                                         |
+| ----------------------- | -------------------------- | --------------------------------------------------- |
+| `prompt-deck.path`      | `resource_path('prompts')` | Base directory where prompt structures are created. |
+| `prompt-deck.extension` | `md`                       | File extension for generated prompt files.          |
 
 See the full [Configuration](/getting-started/configuration) reference for all options.
 

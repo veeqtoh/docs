@@ -10,19 +10,19 @@ It provides variable interpolation, performance tracking, A/B testing, and optio
 Get up and running with Prompt Deck in minutes.
 
 <Card
-  title="Installation guide"
-  icon="rocket"
-  href="/getting-started/installation"
-  horizontal
+    title="Installation guide"
+    icon="rocket"
+    href="/getting-started/installation"
+    horizontal
 >
-  Install, configure, and verify Prompt Deck in your Laravel project.
+    Install, configure, and verify Prompt Deck in your Laravel project.
 </Card>
 
 ## Quick usage
 
 ### Creating a prompt
 
-Use the Artisan command to create a versioned prompt:
+After installing (<a href="/getting-started/installation" target='_blank'>installation guide</a>), use the Artisan command to create a versioned prompt:
 
 ```bash
 php artisan make:prompt order-summary
@@ -34,7 +34,7 @@ This creates the following structure:
 resources/prompts/
 └── order-summary/
     ├── v1/
-    │   └── system.md
+        └── system.md
     └── metadata.json
 ```
 
@@ -105,36 +105,62 @@ Running `make:agent` will also auto-scaffold a matching prompt directory.
 ## Key features
 
 <CardGroup cols={2}>
-  <Card title="Versioned prompts" icon="layer-group" href="/core/prompts">
-    Store prompts as files on disk with directory-based versioning. Load, render, and switch between versions effortlessly.
-  </Card>
-  <Card title="Prompt generator" icon="wand-magic-sparkles" href="/core/make-prompt">
-    Scaffold versioned, role-based prompt structures with the `make:prompt` Artisan command.
-  </Card>
-  <Card title="Variable interpolation" icon="code" href="/core/prompts#variable-interpolation">
-    Use `{{ $variable }}` syntax in prompt templates for dynamic content rendering.
-  </Card>
-  <Card title="AI API messages" icon="message" href="/core/prompts#building-messages-for-ai-apis">
-    Convert prompts to messages arrays ready for OpenAI, Anthropic, and other chat-completion APIs.
-  </Card>
-  <Card title="Laravel AI SDK" icon="robot" href="/integrations/ai-sdk">
-    First-class integration with Laravel AI SDK — auto-scaffolding, traits, and middleware.
-  </Card>
-  <Card title="Performance tracking" icon="chart-line" href="/advanced/tracking">
-    Log executions with token usage, latency, cost, and feedback for A/B testing and monitoring.
-  </Card>
+    <Card title="Versioned prompts" icon="layer-group" href="/core/prompts">
+        Store prompts as files on disk with directory-based versioning. Load,
+        render, and switch between versions effortlessly.
+    </Card>
+    <Card
+        title="Prompt generator"
+        icon="wand-magic-sparkles"
+        href="/core/make-prompt"
+    >
+        Scaffold versioned, role-based prompt structures with the `make:prompt`
+        Artisan command.
+    </Card>
+    <Card
+        title="Variable interpolation"
+        icon="code"
+        href="/core/prompts#variable-interpolation"
+    >
+        Use `{{ $variable }}` syntax in prompt templates for dynamic content
+        rendering.
+    </Card>
+    <Card
+        title="AI API messages"
+        icon="message"
+        href="/core/prompts#building-messages-for-ai-apis"
+    >
+        Convert prompts to messages arrays ready for OpenAI, Anthropic, and
+        other chat-completion APIs.
+    </Card>
+    <Card title="Laravel AI SDK" icon="robot" href="/integrations/ai-sdk">
+        First-class integration with Laravel AI SDK — auto-scaffolding, traits,
+        and middleware.
+    </Card>
+    <Card
+        title="Performance tracking"
+        icon="chart-line"
+        href="/advanced/tracking"
+    >
+        Log executions with token usage, latency, cost, and feedback for A/B
+        testing and monitoring.
+    </Card>
 </CardGroup>
 
 ## Explore the docs
 
 <CardGroup cols={3}>
-  <Card title="Configuration" icon="gear" href="/getting-started/configuration">
-    Customise caching, tracking, and file settings.
-  </Card>
-  <Card title="Artisan commands" icon="terminal" href="/core/commands">
-    Five commands for managing prompts from the CLI.
-  </Card>
-  <Card title="Testing" icon="flask-vial" href="/advanced/testing">
-    Strategies and examples for testing prompts.
-  </Card>
+    <Card
+        title="Configuration"
+        icon="gear"
+        href="/getting-started/configuration"
+    >
+        Customise caching, tracking, and file settings.
+    </Card>
+    <Card title="Artisan commands" icon="terminal" href="/core/commands">
+        Five commands for managing prompts from the CLI.
+    </Card>
+    <Card title="Testing" icon="flask-vial" href="/advanced/testing">
+        Strategies and examples for testing prompts.
+    </Card>
 </CardGroup>

@@ -7,13 +7,13 @@ description: "All available Artisan commands for managing prompts from the comma
 
 Prompt Deck registers five Artisan commands for managing your prompts from the command line. All commands are available when running in the console.
 
-| Command | Description |
-|---|---|
-| `make:prompt` | Create a new prompt structure with versioned role files. |
-| `prompt:list` | List all available prompts and their versions. |
-| `prompt:activate` | Activate a specific version of a prompt. |
-| `prompt:diff` | Show differences between two prompt versions. |
-| `prompt:test` | Test a prompt with sample input and see the rendered result. |
+| Command           | Description                                                  |
+| ----------------- | ------------------------------------------------------------ |
+| `make:prompt`     | Create a new prompt structure with versioned role files.     |
+| `prompt:list`     | List all available prompts and their versions.               |
+| `prompt:activate` | Activate a specific version of a prompt.                     |
+| `prompt:diff`     | Show differences between two prompt versions.                |
+| `prompt:test`     | Test a prompt with sample input and see the rendered result. |
 
 ## make:prompt
 
@@ -25,20 +25,20 @@ make:prompt {name?} {--from=} {--desc=} {--u|user} {--role=*} {--i|interactive} 
 
 ### Arguments
 
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `name` | No | The name of the prompt. Omit for interactive mode. Automatically normalised to kebab-case. |
+| Argument | Required | Description                                                                                |
+| -------- | -------- | ------------------------------------------------------------------------------------------ |
+| `name`   | No       | The name of the prompt. Omit for interactive mode. Automatically normalised to kebab-case. |
 
 ### Options
 
-| Option | Shorthand | Description |
-|---|---|---|
-| `--from=` | | Path to a custom stub file to use as the user prompt template. |
-| `--desc=` | | A short description stored in `metadata.json`. |
-| `--user` | `-u` | Also create a `user` prompt file alongside the default `system` prompt. |
-| `--role=*` | | Additional roles to scaffold. Repeatable (e.g. `--role=assistant --role=developer`). |
-| `--interactive` | `-i` | Interactively choose which additional roles to create. |
-| `--force` | `-f` | Overwrite an existing prompt's latest version without confirmation. |
+| Option          | Shorthand | Description                                                                          |
+| --------------- | --------- | ------------------------------------------------------------------------------------ |
+| `--from=`       |           | Path to a custom stub file to use as the user prompt template.                       |
+| `--desc=`       |           | A short description stored in `metadata.json`.                                       |
+| `--user`        | `-u`      | Also create a `user` prompt file alongside the default `system` prompt.              |
+| `--role=*`      |           | Additional roles to scaffold. Repeatable (e.g. `--role=assistant --role=developer`). |
+| `--interactive` | `-i`      | Interactively choose which additional roles to create.                               |
+| `--force`       | `-f`      | Overwrite an existing prompt's latest version without confirmation.                  |
 
 ### Examples
 
@@ -97,8 +97,8 @@ prompt:list {--all : Show all versions for each prompt}
 
 ### Options
 
-| Option | Description |
-|---|---|
+| Option  | Description                                                 |
+| ------- | ----------------------------------------------------------- |
 | `--all` | Show all versions for each prompt, not just the active one. |
 
 ### Examples
@@ -154,10 +154,10 @@ prompt:activate {name : The prompt name} {version : The version number to activa
 
 ### Arguments
 
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `name` | Yes | The prompt name (e.g. `order-summary`). |
-| `version` | Yes | The version number to activate (e.g. `2`). |
+| Argument  | Required | Description                                |
+| --------- | -------- | ------------------------------------------ |
+| `name`    | Yes      | The prompt name (e.g. `order-summary`).    |
+| `version` | Yes      | The version number to activate (e.g. `2`). |
 
 ### Examples
 
@@ -194,17 +194,17 @@ prompt:diff {name : The prompt name} {--v1= : First version number} {--v2= : Sec
 
 ### Arguments
 
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `name` | Yes | The prompt name (e.g. `order-summary`). |
+| Argument | Required | Description                             |
+| -------- | -------- | --------------------------------------- |
+| `name`   | Yes      | The prompt name (e.g. `order-summary`). |
 
 ### Options
 
-| Option | Required | Description |
-|---|---|---|
-| `--v1=` | Yes | The first version number to compare. |
-| `--v2=` | Yes | The second version number to compare. |
-| `--type=` | No | Which role files to compare: `system`, `user`, or `all` (default). |
+| Option    | Required | Description                                                        |
+| --------- | -------- | ------------------------------------------------------------------ |
+| `--v1=`   | Yes      | The first version number to compare.                               |
+| `--v2=`   | Yes      | The second version number to compare.                              |
+| `--type=` | No       | Which role files to compare: `system`, `user`, or `all` (default). |
 
 ### Examples
 
@@ -260,16 +260,16 @@ prompt:test {name : The prompt name} {--ver= : Specific version (defaults to act
 
 ### Arguments
 
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `name` | Yes | The prompt name to test (e.g. `order-summary`). |
+| Argument | Required | Description                                     |
+| -------- | -------- | ----------------------------------------------- |
+| `name`   | Yes      | The prompt name to test (e.g. `order-summary`). |
 
 ### Options
 
-| Option | Description |
-|---|---|
-| `--ver=` | Specific version to test. Defaults to the active version. |
-| `--input=` | Custom input text. Defaults to `"Sample user input"`. |
+| Option         | Description                                                   |
+| -------------- | ------------------------------------------------------------- |
+| `--ver=`       | Specific version to test. Defaults to the active version.     |
+| `--input=`     | Custom input text. Defaults to `"Sample user input"`.         |
 | `--variables=` | JSON string of variables for interpolation. Defaults to `{}`. |
 
 ### Examples

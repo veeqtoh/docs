@@ -62,19 +62,20 @@ The connection name must match a connection defined in `config/database.php`.
 
 Stores prompt version records and tracks which version is active.
 
-| Column | Type | Nullable | Description |
-|---|---|---|---|
-| `id` | `bigint` | No | Auto-incrementing primary key. |
-| `name` | `string` | No | The prompt name (e.g. `order-summary`). |
-| `version` | `unsigned int` | No | The version number (e.g. `1`, `2`, `3`). |
-| `system_prompt` | `text` | Yes | The system prompt content. |
-| `user_prompt` | `text` | No | The user prompt content. |
-| `metadata` | `json` | Yes | Version metadata as JSON. |
-| `is_active` | `boolean` | No | Whether this version is the active version. Default: `false`. |
-| `created_at` | `timestamp` | Yes | Creation timestamp. |
-| `updated_at` | `timestamp` | Yes | Last update timestamp. |
+| Column          | Type           | Nullable | Description                                                   |
+| --------------- | -------------- | -------- | ------------------------------------------------------------- |
+| `id`            | `bigint`       | No       | Auto-incrementing primary key.                                |
+| `name`          | `string`       | No       | The prompt name (e.g. `order-summary`).                       |
+| `version`       | `unsigned int` | No       | The version number (e.g. `1`, `2`, `3`).                      |
+| `system_prompt` | `text`         | Yes      | The system prompt content.                                    |
+| `user_prompt`   | `text`         | No       | The user prompt content.                                      |
+| `metadata`      | `json`         | Yes      | Version metadata as JSON.                                     |
+| `is_active`     | `boolean`      | No       | Whether this version is the active version. Default: `false`. |
+| `created_at`    | `timestamp`    | Yes      | Creation timestamp.                                           |
+| `updated_at`    | `timestamp`    | Yes      | Last update timestamp.                                        |
 
 **Indexes:**
+
 - Unique index on `(name, version)` — ensures no duplicate versions per prompt.
 - Index on `(name, is_active)` — fast lookups for the active version.
 
@@ -82,26 +83,28 @@ Stores prompt version records and tracks which version is active.
 
 Logs individual prompt executions with performance data.
 
-| Column | Type | Nullable | Description |
-|---|---|---|---|
-| `id` | `bigint` | No | Auto-incrementing primary key. |
-| `prompt_name` | `string` | No | The prompt name. |
-| `prompt_version` | `unsigned int` | No | The prompt version used. |
-| `input` | `json` | Yes | The input sent to the AI provider. |
-| `output` | `text` | Yes | The response received from the AI provider. |
-| `tokens` | `unsigned int` | Yes | Total token usage (input + output). |
-| `latency_ms` | `unsigned int` | Yes | Round-trip time in milliseconds. |
-| `cost` | `decimal(8,6)` | Yes | Estimated cost in your currency. |
-| `model` | `string` | Yes | The AI model used (e.g. `gpt-4o`). |
-| `provider` | `string` | Yes | The AI provider (e.g. `openai`, `anthropic`). |
-| `feedback` | `json` | Yes | User feedback (ratings, comments, etc.). |
-| `created_at` | `timestamp` | Yes | Execution timestamp. |
+| Column           | Type           | Nullable | Description                                   |
+| ---------------- | -------------- | -------- | --------------------------------------------- |
+| `id`             | `bigint`       | No       | Auto-incrementing primary key.                |
+| `prompt_name`    | `string`       | No       | The prompt name.                              |
+| `prompt_version` | `unsigned int` | No       | The prompt version used.                      |
+| `input`          | `json`         | Yes      | The input sent to the AI provider.            |
+| `output`         | `text`         | Yes      | The response received from the AI provider.   |
+| `tokens`         | `unsigned int` | Yes      | Total token usage (input + output).           |
+| `latency_ms`     | `unsigned int` | Yes      | Round-trip time in milliseconds.              |
+| `cost`           | `decimal(8,6)` | Yes      | Estimated cost in your currency.              |
+| `model`          | `string`       | Yes      | The AI model used (e.g. `gpt-4o`).            |
+| `provider`       | `string`       | Yes      | The AI provider (e.g. `openai`, `anthropic`). |
+| `feedback`       | `json`         | Yes      | User feedback (ratings, comments, etc.).      |
+| `created_at`     | `timestamp`    | Yes      | Execution timestamp.                          |
 
 **Indexes:**
+
 - Index on `(prompt_name, prompt_version, created_at)` — fast filtering by prompt and time range.
 
 <Note>
-The `prompt_executions` table does not have an `updated_at` column. Records are insert-only.
+    The `prompt_executions` table does not have an `updated_at` column. Records
+    are insert-only.
 </Note>
 
 ## Recording executions
@@ -146,16 +149,16 @@ When using the [Laravel AI SDK integration](/integrations/ai-sdk), the `TrackPro
 
 ### Tracked fields
 
-| Field | Type | Description |
-|---|---|---|
-| `input` | `array\|null` | The input data sent to the AI provider. Stored as JSON. |
-| `output` | `string\|null` | The text response from the AI provider. |
-| `tokens` | `int\|null` | Total token count (input + output tokens). |
-| `latency` | `float\|null` | Round-trip time in milliseconds. Stored as `latency_ms`. |
-| `cost` | `float\|null` | Estimated cost. Stored with up to 6 decimal places. |
-| `model` | `string\|null` | AI model identifier (e.g. `gpt-4o`, `claude-3-sonnet`). |
-| `provider` | `string\|null` | AI provider name (e.g. `openai`, `anthropic`). |
-| `feedback` | `array\|null` | Arbitrary feedback data. Stored as JSON. |
+| Field      | Type           | Description                                              |
+| ---------- | -------------- | -------------------------------------------------------- |
+| `input`    | `array\|null`  | The input data sent to the AI provider. Stored as JSON.  |
+| `output`   | `string\|null` | The text response from the AI provider.                  |
+| `tokens`   | `int\|null`    | Total token count (input + output tokens).               |
+| `latency`  | `float\|null`  | Round-trip time in milliseconds. Stored as `latency_ms`. |
+| `cost`     | `float\|null`  | Estimated cost. Stored with up to 6 decimal places.      |
+| `model`    | `string\|null` | AI model identifier (e.g. `gpt-4o`, `claude-3-sonnet`).  |
+| `provider` | `string\|null` | AI provider name (e.g. `openai`, `anthropic`).           |
+| `feedback` | `array\|null`  | Arbitrary feedback data. Stored as JSON.                 |
 
 ## Eloquent models
 
@@ -185,11 +188,11 @@ $versions = PromptVersion::where('name', 'order-summary')
 
 **Casts:**
 
-| Attribute | Cast |
-|---|---|
-| `version` | `integer` |
+| Attribute   | Cast      |
+| ----------- | --------- |
+| `version`   | `integer` |
 | `is_active` | `boolean` |
-| `metadata` | `array` |
+| `metadata`  | `array`   |
 
 ### PromptExecution
 
@@ -216,17 +219,18 @@ $v2Executions = PromptExecution::where('prompt_name', 'order-summary')
 
 **Casts:**
 
-| Attribute | Cast |
-|---|---|
-| `prompt_version` | `integer` |
-| `tokens` | `integer` |
-| `latency_ms` | `integer` |
-| `cost` | `decimal:6` |
-| `input` | `array` |
-| `feedback` | `array` |
+| Attribute        | Cast        |
+| ---------------- | ----------- |
+| `prompt_version` | `integer`   |
+| `tokens`         | `integer`   |
+| `latency_ms`     | `integer`   |
+| `cost`           | `decimal:6` |
+| `input`          | `array`     |
+| `feedback`       | `array`     |
 
 <Note>
-`PromptExecution` sets `UPDATED_AT = null` since execution records are insert-only and never updated.
+    `PromptExecution` sets `UPDATED_AT = null` since execution records are
+    insert-only and never updated.
 </Note>
 
 ## Factories
@@ -254,11 +258,11 @@ $version = PromptVersion::factory()
 
 **Available states:**
 
-| Method | Description |
-|---|---|
-| `active()` | Mark as the active version (`is_active = true`). |
-| `version(int $v)` | Set a specific version number. |
-| `named(string $name)` | Set a specific prompt name. |
+| Method                | Description                                      |
+| --------------------- | ------------------------------------------------ |
+| `active()`            | Mark as the active version (`is_active = true`). |
+| `version(int $v)`     | Set a specific version number.                   |
+| `named(string $name)` | Set a specific prompt name.                      |
 
 ### PromptExecutionFactory
 
@@ -284,11 +288,11 @@ $execution = PromptExecution::factory()
 
 **Available states:**
 
-| Method | Description |
-|---|---|
-| `withFeedback(array $feedback = [])` | Include user feedback. Generates random feedback if no argument given. |
-| `minimal()` | Set all optional fields to `null`. |
-| `forPrompt(string $name, int $version)` | Set a specific prompt name and version. |
+| Method                                  | Description                                                            |
+| --------------------------------------- | ---------------------------------------------------------------------- |
+| `withFeedback(array $feedback = [])`    | Include user feedback. Generates random feedback if no argument given. |
+| `minimal()`                             | Set all optional fields to `null`.                                     |
+| `forPrompt(string $name, int $version)` | Set a specific prompt name and version.                                |
 
 ## Querying execution data
 

@@ -43,15 +43,16 @@ The `extension` option controls the file extension used for prompt template file
 
 Markdown (`.md`) is the default and recommended for readability. You can change it to any extension:
 
-| Value | Result |
-|---|---|
-| `md` | `system.md`, `user.md` |
-| `txt` | `system.txt`, `user.txt` |
+| Value       | Result                               |
+| ----------- | ------------------------------------ |
+| `md`        | `system.md`, `user.md`               |
+| `txt`       | `system.txt`, `user.txt`             |
 | `blade.php` | `system.blade.php`, `user.blade.php` |
-| `prompt` | `system.prompt`, `user.prompt` |
+| `prompt`    | `system.prompt`, `user.prompt`       |
 
 <Note>
-Changing the extension only affects newly generated files. Existing prompt files are not renamed automatically.
+    Changing the extension only affects newly generated files. Existing prompt
+    files are not renamed automatically.
 </Note>
 
 ## Versioning strategy
@@ -110,12 +111,12 @@ PROMPTDECK_CACHE_ENABLED=true    # Always enable caching
 
 The cache store to use. Must match a store name defined in your `config/cache.php`. Common values:
 
-| Store | Description |
-|---|---|
-| `file` | File-based cache (default). Simple, no extra dependencies. |
-| `redis` | Redis cache. Fast, shared across workers. |
-| `memcached` | Memcached. Similar to Redis. |
-| `array` | In-memory only. Cleared on each request (useful for testing). |
+| Store       | Description                                                   |
+| ----------- | ------------------------------------------------------------- |
+| `file`      | File-based cache (default). Simple, no extra dependencies.    |
+| `redis`     | Redis cache. Fast, shared across workers.                     |
+| `memcached` | Memcached. Similar to Redis.                                  |
+| `array`     | In-memory only. Cleared on each request (useful for testing). |
 
 ### TTL
 
@@ -134,6 +135,7 @@ Cache time-to-live in **seconds**. After this duration, the prompt is re-read fr
 The prefix prepended to all cache keys. The final cache key follows the pattern: `{prefix}{prompt-name}.v{version}`.
 
 For example, with the default prefix:
+
 ```
 prompt-deck:order-summary.v2
 ```
@@ -161,7 +163,9 @@ Like caching, tracking is **disabled** in debug mode and **enabled** in producti
 - **Execution tracking** via `PromptDeck::track()` inserts records into the `prompt_executions` table.
 
 <Warning>
-You must publish and run the migrations before enabling tracking. See [Installation — Publishing migrations](/getting-started/installation#publishing-migrations).
+    You must publish and run the migrations before enabling tracking. See
+    [Installation — Publishing
+    migrations](/getting-started/installation#publishing-migrations).
 </Warning>
 
 ### Database connection
@@ -192,27 +196,27 @@ PROMPTDECK_SCAFFOLD_ON_MAKE_AGENT=false
 
 ## Full configuration reference
 
-| Key | Type | Default | Description |
-|---|---|---|---|
-| `path` | `string` | `resource_path('prompts')` | Base directory where prompt files are stored. |
-| `extension` | `string` | `md` | File extension for prompt template files. |
-| `versioning` | `string` | `directory` | Versioning strategy (`directory`). |
-| `cache.enabled` | `bool` | `true` (prod) / `false` (debug) | Enable prompt caching. |
-| `cache.store` | `string` | `file` | Cache store name. |
-| `cache.ttl` | `int` | `3600` | Cache TTL in seconds. |
-| `cache.prefix` | `string` | `prompt-deck:` | Cache key prefix. |
-| `tracking.enabled` | `bool` | `true` (prod) / `false` (debug) | Enable database tracking. |
-| `tracking.connection` | `string\|null` | `null` | Database connection name. |
-| `scaffold_on_make_agent` | `bool` | `true` | Auto-scaffold prompts on `make:agent`. |
+| Key                      | Type           | Default                         | Description                                   |
+| ------------------------ | -------------- | ------------------------------- | --------------------------------------------- |
+| `path`                   | `string`       | `resource_path('prompts')`      | Base directory where prompt files are stored. |
+| `extension`              | `string`       | `md`                            | File extension for prompt template files.     |
+| `versioning`             | `string`       | `directory`                     | Versioning strategy (`directory`).            |
+| `cache.enabled`          | `bool`         | `true` (prod) / `false` (debug) | Enable prompt caching.                        |
+| `cache.store`            | `string`       | `file`                          | Cache store name.                             |
+| `cache.ttl`              | `int`          | `3600`                          | Cache TTL in seconds.                         |
+| `cache.prefix`           | `string`       | `prompt-deck:`                  | Cache key prefix.                             |
+| `tracking.enabled`       | `bool`         | `true` (prod) / `false` (debug) | Enable database tracking.                     |
+| `tracking.connection`    | `string\|null` | `null`                          | Database connection name.                     |
+| `scaffold_on_make_agent` | `bool`         | `true`                          | Auto-scaffold prompts on `make:agent`.        |
 
 ## Environment variables reference
 
-| Variable | Default | Description |
-|---|---|---|
-| `PROMPTDECK_CACHE_ENABLED` | Dynamic | Enable/disable caching. |
-| `PROMPTDECK_CACHE_STORE` | `file` | Cache store to use. |
-| `PROMPTDECK_CACHE_TTL` | `3600` | Cache TTL in seconds. |
-| `PROMPTDECK_CACHE_PREFIX` | `prompt-deck:` | Cache key prefix. |
-| `PROMPTDECK_TRACKING_ENABLED` | Dynamic | Enable/disable database tracking. |
-| `PROMPTDECK_DB_CONNECTION` | `null` | Database connection for tracking. |
-| `PROMPTDECK_SCAFFOLD_ON_MAKE_AGENT` | `true` | Auto-scaffold on `make:agent`. |
+| Variable                            | Default        | Description                       |
+| ----------------------------------- | -------------- | --------------------------------- |
+| `PROMPTDECK_CACHE_ENABLED`          | Dynamic        | Enable/disable caching.           |
+| `PROMPTDECK_CACHE_STORE`            | `file`         | Cache store to use.               |
+| `PROMPTDECK_CACHE_TTL`              | `3600`         | Cache TTL in seconds.             |
+| `PROMPTDECK_CACHE_PREFIX`           | `prompt-deck:` | Cache key prefix.                 |
+| `PROMPTDECK_TRACKING_ENABLED`       | Dynamic        | Enable/disable database tracking. |
+| `PROMPTDECK_DB_CONNECTION`          | `null`         | Database connection for tracking. |
+| `PROMPTDECK_SCAFFOLD_ON_MAKE_AGENT` | `true`         | Auto-scaffold on `make:agent`.    |

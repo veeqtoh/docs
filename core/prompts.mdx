@@ -231,10 +231,10 @@ Roles specified in the filter that don't exist in the prompt are silently skippe
 
 Prompt Deck supports two placeholder syntaxes within prompt files:
 
-| Syntax | Example |
-|---|---|
+| Syntax               | Example       |
+| -------------------- | ------------- |
 | Spaced (recommended) | `{{ $tone }}` |
-| Compact | `{{tone}}` |
+| Compact              | `{{tone}}`    |
 
 Both are replaced when you render a role with variables:
 
@@ -246,7 +246,8 @@ $prompt->system(['tone' => 'friendly', 'task' => 'summarise']);
 ```
 
 <Tip>
-Use the spaced syntax (`{{ $variable }}`) for consistency with Laravel Blade conventions.
+    Use the spaced syntax (`{{ $variable }}`) for consistency with Laravel Blade
+    conventions.
 </Tip>
 
 ### Supported value types
@@ -291,6 +292,7 @@ resources/prompts/
 ```
 
 Each version directory can contain:
+
 - Any number of role files (e.g. `system.md`, `user.md`, `assistant.md`)
 - An optional `metadata.json` for version-level metadata
 
@@ -389,7 +391,9 @@ All fields in the data array are optional. Records are inserted into the `prompt
 See [Tracking & Performance](/advanced/tracking) for comprehensive documentation on the tracking system, database schema, and Eloquent models.
 
 <Tip>
-When using the [Laravel AI SDK integration](/integrations/ai-sdk), the `TrackPromptMiddleware` handles execution tracking automatically — no manual `track()` calls needed.
+    When using the [Laravel AI SDK integration](/integrations/ai-sdk), the
+    `TrackPromptMiddleware` handles execution tracking automatically — no manual
+    `track()` calls needed.
 </Tip>
 
 ## Serialisation

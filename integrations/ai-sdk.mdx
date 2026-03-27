@@ -107,12 +107,12 @@ The `HasPromptTemplate` trait bridges Prompt Deck's file-based templates with th
 
 ### How it maps to AI SDK contracts
 
-| Prompt Deck | AI SDK | Description |
-|---|---|---|
-| `system.md` role file | `instructions()` | Agent's system prompt. |
-| `user.md`, `assistant.md`, etc. | `messages()` via `promptMessages()` | Conversation context. |
-| `metadata.json` | — | Prompt metadata (description, variables, etc.). |
-| `v1/`, `v2/`, etc. | — | Version management. |
+| Prompt Deck                     | AI SDK                              | Description                                     |
+| ------------------------------- | ----------------------------------- | ----------------------------------------------- |
+| `system.md` role file           | `instructions()`                    | Agent's system prompt.                          |
+| `user.md`, `assistant.md`, etc. | `messages()` via `promptMessages()` | Conversation context.                           |
+| `metadata.json`                 | —                                   | Prompt metadata (description, variables, etc.). |
+| `v1/`, `v2/`, etc.              | —                                   | Version management.                             |
 
 ### Mapping diagram
 
@@ -289,6 +289,7 @@ You are a sales coach for {{ $company }}.
 You are helping {{ $user_name }} improve their sales technique.
 
 Analyse transcripts carefully and provide:
+
 - Specific, actionable feedback
 - A score from 1-10
 ```
@@ -361,6 +362,7 @@ The `TrackPromptMiddleware` automatically records prompt executions via Prompt D
         'connection' => null, // uses default database connection
     ],
     ```
+
   </Step>
   <Step title="Publish and run migrations">
     ```bash
@@ -385,6 +387,7 @@ The `TrackPromptMiddleware` automatically records prompt executions via Prompt D
         }
     }
     ```
+
   </Step>
 </Steps>
 
@@ -392,20 +395,21 @@ The `TrackPromptMiddleware` automatically records prompt executions via Prompt D
 
 The middleware automatically records the following fields to the `prompt_executions` table:
 
-| Field | Source |
-|---|---|
-| `prompt_name` | Agent's `promptName()` method. |
-| `prompt_version` | Resolved template version number. |
-| `input` | The user's prompt text from the `AgentPrompt`. |
-| `output` | The AI response text. |
-| `tokens` | Total token usage from the response. |
-| `latency_ms` | Round-trip time in milliseconds (measured via `hrtime`). |
-| `model` | Model used (e.g. `gpt-4o`, `claude-3-sonnet`). |
-| `provider` | Provider name (e.g. `openai`, `anthropic`). |
+| Field            | Source                                                   |
+| ---------------- | -------------------------------------------------------- |
+| `prompt_name`    | Agent's `promptName()` method.                           |
+| `prompt_version` | Resolved template version number.                        |
+| `input`          | The user's prompt text from the `AgentPrompt`.           |
+| `output`         | The AI response text.                                    |
+| `tokens`         | Total token usage from the response.                     |
+| `latency_ms`     | Round-trip time in milliseconds (measured via `hrtime`). |
+| `model`          | Model used (e.g. `gpt-4o`, `claude-3-sonnet`).           |
+| `provider`       | Provider name (e.g. `openai`, `anthropic`).              |
 
 ### How it works internally
 
 The middleware:
+
 1. Records the start time before the request using `hrtime(true)`.
 2. Passes the prompt to the next middleware in the pipeline.
 3. Uses the response's `then()` hook to record execution data after the response completes.
@@ -446,6 +450,7 @@ $agent->forgetPromptTemplate();
 ```
 
 This is useful in:
+
 - **Long-running processes** (queue workers, daemons) where prompts might change between jobs.
 - **Tests** where you switch prompt versions between assertions.
 

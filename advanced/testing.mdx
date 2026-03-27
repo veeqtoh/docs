@@ -76,11 +76,13 @@ tests/
 ```
 
 `tests/fixtures/prompts/order-summary/v1/system.md`:
+
 ```markdown
 You are a {{ $tone }} AI assistant specialized in order summaries.
 ```
 
 `tests/fixtures/prompts/order-summary/v1/user.md`:
+
 ```markdown
 Summarise this order: {{ $input }}
 ```
@@ -402,5 +404,6 @@ it('clears cached template between tests', function () {
 ```
 
 <Tip>
-Always call `forgetPromptTemplate()` in tests where you modify prompt files or change the active version between assertions.
+    Always call `forgetPromptTemplate()` in tests where you modify prompt files
+    or change the active version between assertions.
 </Tip>
